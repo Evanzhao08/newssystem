@@ -10,6 +10,42 @@
       "roleId": 1
     },
     {
+      "username": "铁锤",
+      "password": "123",
+      "roleState": true,
+      "default": false,
+      "region": "亚洲",
+      "roleId": 2,
+      "id": 2
+    },
+    {
+      "username": "钢蛋",
+      "password": "123",
+      "roleState": true,
+      "default": false,
+      "region": "南极洲",
+      "roleId": 2,
+      "id": 3
+    },
+    {
+      "username": "诸葛山珍",
+      "password": "123",
+      "roleState": true,
+      "default": false,
+      "region": "",
+      "roleId": 1,
+      "id": 4
+    },
+    {
+      "username": "西门吹灯",
+      "password": "123",
+      "roleState": true,
+      "default": false,
+      "region": "南极洲",
+      "roleId": 3,
+      "id": 5
+    },
+    {
       "username": "轩辕翠花",
       "password": "123",
       "roleState": true,
@@ -28,67 +64,13 @@
       "id": 7
     },
     {
-      "username": "郭靖",
-      "password": "wwww",
+      "username": "咕噜墩子",
+      "password": "123",
       "roleState": true,
       "default": false,
       "region": "亚洲",
-      "roleId": 2,
-      "id": 8
-    },
-    {
-      "username": "杨过",
-      "password": "wwww",
-      "region": 3,
-      "roleId": 2,
-      "roleState": true,
-      "default": false,
-      "id": 9
-    },
-    {
-      "username": "叶孤城",
-      "password": "Zxf123",
-      "region": "欧洲",
       "roleId": 3,
-      "roleState": true,
-      "default": false,
-      "id": 11
-    },
-    {
-      "username": "黄药师",
-      "password": "123",
-      "region": "南美洲",
-      "roleId": 2,
-      "roleState": true,
-      "default": false,
-      "id": 14
-    },
-    {
-      "username": "欧阳锋",
-      "password": "123",
-      "region": "南极洲",
-      "roleId": 2,
-      "roleState": true,
-      "default": false,
-      "id": 15
-    },
-    {
-      "username": "一灯大师",
-      "password": "123",
-      "region": "大洋洲",
-      "roleId": 2,
-      "roleState": true,
-      "default": false,
-      "id": 16
-    },
-    {
-      "username": "洪七公",
-      "password": "123",
-      "region": "非洲",
-      "roleId": 2,
-      "roleState": true,
-      "default": false,
-      "id": 18
+      "id": 8
     }
   ],
   "roles": [

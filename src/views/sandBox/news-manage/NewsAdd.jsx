@@ -1,41 +1,94 @@
 import style from "./News.module.css";
 import React, { useEffect, useState, useRef } from "react";
-import { Button, PageHeader, Steps, Form, Input, Select } from "antd";
+import NewEditor from "../../../components/news-manage/NewEditor";
+import {
+  Button,
+  PageHeader,
+  Steps,
+  Form,
+  Input,
+  Select,
+  message,
+  notification,
+} from "antd";
 import axios from "axios";
 const description = "新闻标题,新闻分类";
+const { Option } = Select;
 
-export default function NewsAdd() {
+export default function NewsAdd(props) {
   const [current, setCurrent] = useState(0);
   const [categoryList, setCategoryList] = useState([]);
 
+  const [formInfo, setFormInfo] = useState({});
+  const [content, setContent] = useState("");
+  const User = JSON.parse(localStorage.getItem("token"));
   const handleNext = () => {
     if (current === 0) {
       NewsForm.current
         .validateFields()
         .then((res) => {
-          console.log(res);
+          console.log("res1111", res);
+          setFormInfo(res);
           setCurrent(current + 1);
         })
         .catch((error) => {
           console.log("err", error);
         });
     } else {
+      console.log(formInfo, content);
+      if (content === "" || content.trim() === "<p></p>") {
+        message.error("新闻内容不能为空");
+      } else {
+        setCurrent(current + 1);
+      }
     }
   };
   const handlePrevious = () => {
     setCurrent(current - 1);
   };
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  };
+  // const handleChange = (value) => {
+  //   console.log(`selected ${value}`);
+  // };
 
   const NewsForm = useRef(null);
   useEffect(() => {
     axios.get("/categories").then((res) => {
-      console.log(res.data);
+      console.log("selectList=>", res.data);
       setCategoryList(res.data);
     });
   }, []);
+  const openNotification = (placement, auditState) => {
+    notification.info({
+      message: `通知`,
+      description: `你可以到${
+        auditState === 0 ? "草稿箱" : "审核列表"
+      }中查看新闻`,
+      placement,
+    });
+  };
+
+  const handleSave = (auditState) => {
+    axios
+      .post("/news", {
+        ...formInfo,
+        content: content,
+        region: User.region ? User.region : "全球",
+        author: User.username,
+        roleId: User.roleId,
+        auditState: auditState,
+        publishState: 0,
+        createTime: Date.now(),
+        star: 0,
+        view: 0,
+        // publishTime: 0,
+      })
+      .then((res) => {
+        props.history.push(
+          auditState === 0 ? "/news-manage/draft" : "audit-manage/list",
+          openNotification("bottomRight", auditState)
+        );
+      });
+  };
 
   return (
     <div>
@@ -100,18 +153,36 @@ export default function NewsAdd() {
                 },
               ]}
             >
-              <Select onChange={handleChange} options={categoryList} />
+              {/* <Select onChange={handleChange} options={categoryList} /> */}
+              <Select>
+                {categoryList.map((item) => (
+                  <Option value={item.id} key={item.id}>
+                    {item.title}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
           </Form>
         </div>
-        <div className={current === 1 ? "" : style.active}>22222</div>
+        <div className={current === 1 ? "" : style.active}>
+          <NewEditor
+            getContent={(value) => {
+              setContent(value);
+              console.log(value);
+            }}
+          ></NewEditor>
+        </div>
         <div className={current === 2 ? "" : style.active}>22222</div>
       </div>
       <div style={{ marginTop: "50px" }}>
         {current === 2 && (
           <span>
-            <Button type="primary">保存草稿箱</Button>
-            <Button danger>提交审核</Button>
+            <Button type="primary" onClick={() => handleSave(0)}>
+              保存草稿箱
+            </Button>
+            <Button danger onClick={() => handleSave(1)}>
+              提交审核
+            </Button>
           </span>
         )}
         {current < 2 && (

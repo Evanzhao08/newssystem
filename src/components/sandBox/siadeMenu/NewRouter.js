@@ -16,6 +16,7 @@ import Unpublished from "../../../views/sandBox/publish-manage/Unpublished";
 import Published from "../../../views/sandBox/publish-manage/Published";
 import Sunset from "../../../views/sandBox/publish-manage/Sunset";
 import { useEffect, useState } from "react";
+import NewsPreview from "../../../views/sandBox/news-manage/NewsPreview";
 import axios from "axios";
 
 const LocalRouterMap = {
@@ -26,6 +27,7 @@ const LocalRouterMap = {
   "/news-manage/add": NewsAdd,
   "/news-manage/draft": NewsDraft,
   "/news-manage/category": NewsCategory,
+  "/news-manage/preview/:id": NewsPreview,
   "/audit-manage/audit": Audit,
   "/audit-manage/list": AuditList,
   "/publish-manage/unpublished": Unpublished,
@@ -45,7 +47,9 @@ export default function NewRouter() {
     role: { rights },
   } = JSON.parse(localStorage.getItem("token"));
   const checkRouter = (item) => {
-    return LocalRouterMap[item.key] && item.pagepermisson;
+    return (
+      LocalRouterMap[item.key] && (item.pagepermisson || item.routepermisson)
+    );
   };
 
   const checkUserPermission = (item) => {

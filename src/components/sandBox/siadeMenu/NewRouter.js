@@ -18,6 +18,7 @@ import Sunset from "../../../views/sandBox/publish-manage/Sunset";
 import { useEffect, useState } from "react";
 import NewsPreview from "../../../views/sandBox/news-manage/NewsPreview";
 import axios from "axios";
+import NewsUpdate from "../../../views/sandBox/news-manage/NewsUpdate";
 
 const LocalRouterMap = {
   "/home": Home,
@@ -28,6 +29,7 @@ const LocalRouterMap = {
   "/news-manage/draft": NewsDraft,
   "/news-manage/category": NewsCategory,
   "/news-manage/preview/:id": NewsPreview,
+  "/news-manage/update/:id": NewsUpdate,
   "/audit-manage/audit": Audit,
   "/audit-manage/list": AuditList,
   "/publish-manage/unpublished": Unpublished,

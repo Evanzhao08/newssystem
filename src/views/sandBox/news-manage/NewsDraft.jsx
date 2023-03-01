@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Table, Button, Modal } from "antd";
+import openNotification from "../../../hooks/useNotification";
 
 import {
   EditOutlined,
@@ -13,7 +14,7 @@ import axios from "axios";
 
 const { confirm } = Modal;
 
-export default function NewsDraft() {
+export default function NewsDraft(props) {
   const [dataSource, setDataSource] = useState([]);
   const { username } = JSON.parse(localStorage.getItem("token"));
   useEffect(() => {
@@ -62,8 +63,20 @@ export default function NewsDraft() {
             shape="circle"
             icon={<DeleteOutlined />}
           />
-          <Button danger shape="circle" icon={<EditOutlined />} />
-          <Button type="primary" shape="circle" icon={<UploadOutlined />} />
+          <Button
+            danger
+            shape="circle"
+            icon={<EditOutlined />}
+            onClick={() => {
+              props.history.push(`/news-manage/update/${item.id}`);
+            }}
+          />
+          <Button
+            type="primary"
+            shape="circle"
+            icon={<UploadOutlined />}
+            onClick={() => handleCheck(item.id)}
+          />
         </div>
       ),
     },
@@ -88,6 +101,26 @@ export default function NewsDraft() {
   const deleteMethod = (item) => {
     setDataSource(dataSource.filter((data) => data.id !== item.id));
     axios.delete(`/news/${item.id}`).then((res) => {});
+  };
+  // const openNotification = (placement) => {
+  //   notification.info({
+  //     message: `通知`,
+  //     description: `你可以到${"审核列表"}中查看新闻`,
+  //     placement,
+  //   });
+  // };
+  const handleCheck = (id) => {
+    console.log(id);
+    axios
+      .patch(`/news/${id}`, {
+        auditState: 1,
+      })
+      .then((res) => {
+        props.history.push(
+          "/audit-manage/list",
+          openNotification("bottomRight", 1)
+        );
+      });
   };
 
   return (

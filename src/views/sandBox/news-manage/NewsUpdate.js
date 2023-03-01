@@ -7,19 +7,18 @@ import axios from "axios";
 const description = "新闻标题,新闻分类";
 const { Option } = Select;
 
-export default function NewsAdd(props) {
+export default function NewsUpdate(props) {
   const [current, setCurrent] = useState(0);
   const [categoryList, setCategoryList] = useState([]);
 
   const [formInfo, setFormInfo] = useState({});
   const [content, setContent] = useState("");
-  const User = JSON.parse(localStorage.getItem("token"));
+  //   const User = JSON.parse(localStorage.getItem("token"));
   const handleNext = () => {
     if (current === 0) {
       NewsForm.current
         .validateFields()
         .then((res) => {
-          console.log("res1111", res);
           setFormInfo(res);
           setCurrent(current + 1);
         })
@@ -27,7 +26,6 @@ export default function NewsAdd(props) {
           console.log("err", error);
         });
     } else {
-      console.log(formInfo, content);
       if (content === "" || content.trim() === "<p></p>") {
         message.error("新闻内容不能为空");
       } else {
@@ -39,6 +37,19 @@ export default function NewsAdd(props) {
     setCurrent(current - 1);
   };
 
+  useEffect(() => {
+    axios
+      .get(`/news/${props.match.params.id}?_expand=category&_expand=role`)
+      .then((res) => {
+        const { title, categoryId, content } = res.data;
+        NewsForm.current.setFieldsValue({
+          title,
+          categoryId,
+        });
+        setContent(content);
+      });
+  }, [props.match.params.id]);
+
   const NewsForm = useRef(null);
   useEffect(() => {
     axios.get("/categories").then((res) => {
@@ -49,18 +60,10 @@ export default function NewsAdd(props) {
 
   const handleSave = (auditState) => {
     axios
-      .post("/news", {
+      .patch(`/news/${props.match.params.id}`, {
         ...formInfo,
         content: content,
-        region: User.region ? User.region : "全球",
-        author: User.username,
-        roleId: User.roleId,
         auditState: auditState,
-        publishState: 0,
-        createTime: Date.now(),
-        star: 0,
-        view: 0,
-        // publishTime: 0,
       })
       .then((res) => {
         props.history.push(
@@ -74,8 +77,9 @@ export default function NewsAdd(props) {
     <div>
       <PageHeader
         className="site-page-header"
-        title="撰写新闻"
-        subTitle="This is a subtitle"
+        title="更新新闻"
+        onBack={() => props.history.goBack()}
+        // subTitle="This is a subtitle"
       />
       <Steps
         current={current}
@@ -146,8 +150,8 @@ export default function NewsAdd(props) {
           <NewEditor
             getContent={(value) => {
               setContent(value);
-              console.log(value);
             }}
+            content={content}
           ></NewEditor>
         </div>
         <div className={current === 2 ? "" : style.active}>22222</div>

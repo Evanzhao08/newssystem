@@ -4,7 +4,7 @@ import { Table, Button, Tag } from "antd";
 
 import openNotification from "../../../hooks/useNotification";
 
-export default function AuditList() {
+export default function AuditList(props) {
   const [dataSource, setDataSource] = useState([]);
   const { username } = JSON.parse(localStorage.getItem("token"));
   const auditList = ["未审核", "审核中", "已审核", "未通过"];
@@ -52,8 +52,21 @@ export default function AuditList() {
           {item.auditState === 1 && (
             <Button onClick={() => handleRervert(item)}>撤销</Button>
           )}
-          {item.auditState === 2 && <Button danger>发布</Button>}
-          {item.auditState === 3 && <Button type="primary">更新</Button>}
+          {item.auditState === 2 && (
+            <Button danger onClick={() => handlePublish(item)}>
+              发布
+            </Button>
+          )}
+          {item.auditState === 3 && (
+            <Button
+              type="primary"
+              onClick={() => {
+                handleUpdate(item);
+              }}
+            >
+              更新
+            </Button>
+          )}
         </div>
       ),
     },
@@ -63,6 +76,20 @@ export default function AuditList() {
     axios.patch(`/news/${item.id}`, { auditState: 0 }).then((res) => {
       openNotification(null, 0);
     });
+  };
+  const handleUpdate = (item) => {
+    props.history.push(`/news-manage/update/${item.id}`);
+  };
+
+  const handlePublish = (item) => {
+    axios
+      .patch(`/news/${item.id}`, {
+        publishState: 2,
+      })
+      .then((res) => {
+        props.history.push("/publish-manage/published");
+        openNotification("bottomRight", 2);
+      });
   };
   return (
     <div>

@@ -5,7 +5,6 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UserOutlined,
-  SmileOutlined,
 } from "@ant-design/icons";
 
 const { Header } = Layout;
@@ -21,7 +20,6 @@ function TopHeader(props) {
     {
       key: "1",
       label: roleName,
-      icon: <SmileOutlined />,
       disabled: false,
     },
 

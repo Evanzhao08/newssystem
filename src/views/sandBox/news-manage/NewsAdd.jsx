@@ -64,7 +64,7 @@ export default function NewsAdd(props) {
       })
       .then((res) => {
         props.history.push(
-          auditState === 0 ? "/news-manage/draft" : "audit-manage/list",
+          auditState === 0 ? "/news-manage/draft" : "/audit-manage/list",
           openNotification("bottomRight", auditState)
         );
       });
@@ -150,7 +150,7 @@ export default function NewsAdd(props) {
             }}
           ></NewEditor>
         </div>
-        <div className={current === 2 ? "" : style.active}>22222</div>
+        <div className={current === 2 ? "" : style.active}></div>
       </div>
       <div style={{ marginTop: "50px" }}>
         {current === 2 && (

@@ -1,5 +1,24 @@
 import React from "react";
-
+import NewsPublish from "../../../components/publish-manage/NewsPublish";
+import usePublish from "../../../hooks/usePublish";
+import { Button } from "antd";
 export default function Sunset() {
-  return <div>Sunset</div>;
+  const { dataSource, handleDelete } = usePublish(3);
+  return (
+    <div>
+      <NewsPublish
+        dataSource={dataSource}
+        button={(id) => (
+          <Button
+            danger
+            onClick={() => {
+              handleDelete(id);
+            }}
+          >
+            删除
+          </Button>
+        )}
+      ></NewsPublish>
+    </div>
+  );
 }

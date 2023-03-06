@@ -1,5 +1,6 @@
 import { Redirect, Route, Switch } from "react-router-dom";
-
+import { Spin } from "antd";
+import { connect } from "react-redux";
 import Home from "../../../views/sandBox/home/Home";
 import UserList from "../../../views/sandBox/user-manage/UserList";
 import RoleList from "../../../views/sandBox/right-manage/RoleList";
@@ -37,7 +38,7 @@ const LocalRouterMap = {
   "/publish-manage/sunset": Sunset,
 };
 
-export default function NewRouter() {
+function NewRouter(props) {
   const [backRouteList, setBackRouteList] = useState([]);
   useEffect(() => {
     Promise.all([axios.get("/rights"), axios.get("/children")]).then((res) => {
@@ -59,23 +60,33 @@ export default function NewRouter() {
   };
 
   return (
-    <Switch>
-      {backRouteList.map((item) => {
-        if (checkRouter(item) && checkUserPermission(item)) {
-          return (
-            <Route
-              path={item.key}
-              key={item.key}
-              component={LocalRouterMap[item.key]}
-              exact
-            />
-          );
-        }
-        return null;
-      })}
+    <Spin size="large" spinning={props.isLoading}>
+      <Switch>
+        {backRouteList.map((item) => {
+          if (checkRouter(item) && checkUserPermission(item)) {
+            return (
+              <Route
+                path={item.key}
+                key={item.key}
+                component={LocalRouterMap[item.key]}
+                exact
+              />
+            );
+          }
+          return null;
+        })}
 
-      <Redirect from="/" to="/home" exact />
-      {backRouteList.length > 0 && <Route path="*" component={NoPermission} />}
-    </Switch>
+        <Redirect from="/" to="/home" exact />
+        {backRouteList.length > 0 && (
+          <Route path="*" component={NoPermission} />
+        )}
+      </Switch>
+    </Spin>
   );
 }
+
+const mapStateToProps = ({ LoadingReducer: { isLoading } }) => ({
+  isLoading,
+});
+
+export default connect(mapStateToProps)(NewRouter);

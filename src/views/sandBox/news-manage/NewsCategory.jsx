@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
-import { Table, Button, Modal } from "antd";
+import { Table, Button, Modal, Form, Input } from "antd";
 import { DeleteOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 
 import axios from "axios";
@@ -15,6 +15,116 @@ export default function NewsCategory() {
     });
   }, []);
 
+  //************************** */
+  const EditableContext = React.createContext(null);
+  const EditableRow = ({ index, ...props }) => {
+    const [form] = Form.useForm();
+    return (
+      <Form form={form} component={false}>
+        <EditableContext.Provider value={form}>
+          <tr {...props} />
+        </EditableContext.Provider>
+      </Form>
+    );
+  };
+  const EditableCell = ({
+    title,
+    editable,
+    children,
+    dataIndex,
+    record,
+    handleSave,
+    ...restProps
+  }) => {
+    const [editing, setEditing] = useState(false);
+    const inputRef = useRef(null);
+    const form = useContext(EditableContext);
+    useEffect(() => {
+      if (editing) {
+        inputRef.current.focus();
+      }
+    }, [editing]);
+    const toggleEdit = () => {
+      setEditing(!editing);
+      form.setFieldsValue({
+        [dataIndex]: record[dataIndex],
+      });
+    };
+    const save = async () => {
+      try {
+        const values = await form.validateFields();
+        toggleEdit();
+        handleSave({
+          ...record,
+          ...values,
+        });
+      } catch (errInfo) {
+        console.log("Save failed:", errInfo);
+      }
+    };
+    let childNode = children;
+    if (editable) {
+      childNode = editing ? (
+        <Form.Item
+          style={{
+            margin: 0,
+          }}
+          name={dataIndex}
+          rules={[
+            {
+              required: true,
+              message: `${title} is required.`,
+            },
+          ]}
+        >
+          <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+        </Form.Item>
+      ) : (
+        <div
+          className="editable-cell-value-wrap"
+          style={{
+            paddingRight: 24,
+          }}
+          onClick={toggleEdit}
+        >
+          {children}
+        </div>
+      );
+    }
+    return <td {...restProps}>{childNode}</td>;
+  };
+
+  //************************** */
+
+  const handleSave = (record) => {
+    console.log(record);
+    setDataSource(
+      dataSource.map((item) => {
+        if (item.id === record.id) {
+          return {
+            id: item.id,
+            title: record.title,
+            value: record.title,
+          };
+        }
+        return item;
+      })
+    );
+    axios.patch(`/categories/${record.id}`, {
+      title: record.title,
+      value: record.title,
+    });
+
+    // const newData = [...dataSource];
+    // const index = newData.findIndex((item) => record.key === item.key);
+    // const item = newData[index];
+    // newData.splice(index, 1, {
+    //   ...item,
+    //   ...record,
+    // });
+    // setDataSource(newData);
+  };
+
   const columns = [
     {
       title: "ID",
@@ -26,6 +136,13 @@ export default function NewsCategory() {
     {
       title: "栏目名称",
       dataIndex: "title",
+      onCell: (record) => ({
+        record,
+        editable: true,
+        dataIndex: "title",
+        title: "栏目名称",
+        handleSave: handleSave,
+      }),
     },
 
     {
@@ -42,7 +159,12 @@ export default function NewsCategory() {
       ),
     },
   ];
-
+  const components = {
+    body: {
+      row: EditableRow,
+      cell: EditableCell,
+    },
+  };
   const confimMethod = (item) => {
     confirm({
       title: "你确认要删除?",
@@ -67,6 +189,7 @@ export default function NewsCategory() {
   return (
     <div>
       <Table
+        components={components}
         dataSource={dataSource}
         columns={columns}
         pagination={{ pageSize: 5 }}

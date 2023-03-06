@@ -12,19 +12,8 @@ import { withRouter } from "react-router-dom";
 //   BackwardFilled,
 //   CalendarOutlined,
 // } from "@ant-design/icons";
-
+import { connect } from "react-redux";
 import "./index.css";
-
-// const iconList = {
-//   "/home": <UserOutlined />,
-//   "/user-manage": <UploadOutlined />,
-//   "/user-manage/list": <VideoCameraOutlined />,
-//   "/right-manage": <AppstoreOutlined />,
-//   "/right-manage/role/list": <SettingOutlined />,
-//   "/right-manage/right/list": <ApiFilled />,
-//   //.......
-// };
-
 const { Sider } = Layout;
 
 const {
@@ -32,7 +21,6 @@ const {
 } = JSON.parse(localStorage.getItem("token"));
 
 function SideMenu(props) {
-  const [collapsed] = useState(false);
   const [menuList, SetmenuList] = useState([]);
 
   useEffect(() => {
@@ -96,7 +84,7 @@ function SideMenu(props) {
   const selectKey = props.location.pathname;
   const openKey = ["/" + props.location.pathname?.split("/")[1]];
   return (
-    <Sider trigger={null} collapsible collapsed={collapsed}>
+    <Sider trigger={null} collapsible collapsed={props.isCollapsed}>
       <div style={{ display: "flex", height: "100%", flexDirection: "column" }}>
         <div className="logo">全球新闻发布管理</div>
         <div style={{ flex: 1, overflow: "auto" }}>
@@ -117,4 +105,8 @@ function SideMenu(props) {
   );
 }
 
-export default withRouter(SideMenu);
+const mapStateToProps = ({ CollApsedReducer: { isCollapsed } }) => ({
+  isCollapsed,
+});
+
+export default connect(mapStateToProps)(withRouter(SideMenu));

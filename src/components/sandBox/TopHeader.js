@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Layout, Dropdown, Avatar } from "antd";
 import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -10,8 +12,12 @@ import {
 const { Header } = Layout;
 
 function TopHeader(props) {
-  const [collapsed, setCollapsed] = useState(false);
+  console.log("TopHeader", props);
+  // const [collapsed, setCollapsed] = useState(false);
 
+  const changeCollapsed = () => {
+    props.changeCollapsed();
+  };
   const {
     role: { roleName },
     username,
@@ -37,10 +43,11 @@ function TopHeader(props) {
   };
   return (
     <Header className="site-layout-background" style={{ padding: "0 16px" }}>
-      {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-        className: "trigger",
-        onClick: () => setCollapsed(console.log(123)),
-      })}
+      {props.isCollapsed ? (
+        <MenuUnfoldOutlined onClick={changeCollapsed} />
+      ) : (
+        <MenuFoldOutlined onClick={changeCollapsed} />
+      )}
       <div style={{ float: "right" }}>
         <span>
           欢迎<span style={{ color: "#1890ff" }}>{username}</span>回来
@@ -54,4 +61,21 @@ function TopHeader(props) {
   );
 }
 
-export default withRouter(TopHeader);
+const mapStateToProps = ({ CollApsedReducer: { isCollapsed } }) => {
+  return {
+    isCollapsed,
+  };
+};
+
+const mapDispatchToProps = {
+  changeCollapsed() {
+    return {
+      type: "change_collapsed",
+    };
+  },
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(TopHeader));

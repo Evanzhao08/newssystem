@@ -1,11 +1,8 @@
 export const CollApsedReducer = (
   prevState = { isCollapsed: false },
-  action
+  action,
 ) => {
-  console.log(action);
-
   let { type } = action;
-
   switch (type) {
     case "change_collapsed":
       let newstate = { ...prevState };

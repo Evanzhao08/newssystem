@@ -11,6 +11,7 @@ export default function NewsPreview(props) {
       .get(`/news/${props.match.params.id}?_expand=category&_expand=role`)
       .then((res) => {
         setNewsInfo(res.data);
+        return res.data;
       });
   }, [props.match.params.id]);
   const auditList = ["未审核", "审核中", "已审核", "未通过"];

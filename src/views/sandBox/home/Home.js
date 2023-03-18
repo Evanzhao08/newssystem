@@ -63,7 +63,7 @@ export default function Home() {
       tooltip: {},
       legend: {
         data: ["数量"],
-        width: "30px",
+
       },
       xAxis: {
         data: Object.keys(obj),
@@ -73,6 +73,7 @@ export default function Home() {
         {
           name: "数量",
           type: "bar",
+          barMaxWidth:50,
           data: Object.keys(obj).map((item) => item.length),
         },
       ],
